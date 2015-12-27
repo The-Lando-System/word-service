@@ -23,7 +23,22 @@ module.exports = function(app) {
 		}
 	});
 	app.get('/anagrams/:word', function(req,res){
-		res.send({ 'anagrams': wordHelper.getWordCombos(req.params.word) });
+		res.send({ 'anagrams': wordHelper.findAnagrams(req.params.word,wordHelper.words) });
+	});
+	app.get('/longest-chain/:dictionarySize', function(req,res){
+		if (req.params.dictionarySize && req.params.dictionarySize >= 1 && req.params.dictionarySize < 28){
+			var newWords = [];
+			for (var i=0; i<wordHelper.words.length; i++){
+				if (wordHelper.words[i].length <= req.params.dictionarySize){
+					newWords.push(wordHelper.words[i]);
+				}
+			}
+			//console.log(newWords.length);
+			var longestChain = wordHelper.getChain(newWords);
+			res.send(longestChain);
+		} else {
+			res.send({msg:'Incorrect parameters given!'});
+		}
 	});
 	app.get('/random-word', function(req,res){
 		var index = Math.floor(Math.random() * wordHelper.words.length);
