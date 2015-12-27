@@ -1,8 +1,4 @@
-var express = require('express');
-var fs = require('fs');
-
-var words = fs.readFileSync('./resources/dictionary.txt', 'utf-8').split('\n');
-words = words.filter(function(n){ return n != "" });
+var wordHelper = require('./wordHelper');
 
 module.exports = function(app) {
 	app.use(function(req, res, next) {
@@ -11,23 +7,26 @@ module.exports = function(app) {
 	  next();
 	});
 	app.get('/dictionary', function(req,res){
-		res.send({ 'words': words });
+		res.send({ 'words': wordHelper.words });
 	});
 	app.get('/dictionary/:size', function(req,res){
 		if (req.params.size >= 1 && req.params.size < 28){
 			var newWords = [];
-			for (var i=0; i<words.length; i++){
-				if (words[i].length <= req.params.size){
-					newWords.push(words[i]);
+			for (var i=0; i<wordHelper.words.length; i++){
+				if (wordHelper.words[i].length <= req.params.size){
+					newWords.push(wordHelper.words[i]);
 				}
 			}
 			res.send({ 'words': newWords });
 		} else {
-			res.send({ 'words': words });
+			res.send({ 'words': wordHelper.words });
 		}
 	});
+	app.get('/anagrams/:word', function(req,res){
+		res.send({ 'anagrams': wordHelper.getWordCombos(req.params.word) });
+	});
 	app.get('/random-word', function(req,res){
-		var index = Math.floor(Math.random() * words.length);
-		res.send({ 'word': words[index] });
+		var index = Math.floor(Math.random() * wordHelper.words.length);
+		res.send({ 'word': wordHelper.words[index] });
 	});
 };
