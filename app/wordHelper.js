@@ -116,17 +116,21 @@ var findChains = function(dict){
 		var wordCombos = {};
 
 		var getAnagrams = function(anagram,word){
-			if (!word && isWord(anagram)) { wordCombos[anagram] = 1 };
-			for (var i=0; i<word.length; i++){
-				getAnagrams(anagram + word[i], getLetters(word,i,'before') + getLetters(word,i,'after'));
-			}
+			//if (Object.keys(wordCombos).length === 0){
+				if (!word && isWord(anagram)) { wordCombos[anagram] = 1 };
+				for (var i=0; i<word.length; i++){
+					getAnagrams(anagram + word[i], getLetters(word,i,'before') + getLetters(word,i,'after'));
+				}
+			//} else {
+				//return;
+			//}
 		};
 
 		getAnagrams('',testWord);
 		return Object.keys(wordCombos);
 	};
 
-	chains = {};
+	var chains = {};
 
 	for (var i=0; i<dict.length; i++){
 
@@ -138,12 +142,14 @@ var findChains = function(dict){
 				var testWord = word + alphabet[j];
 
 				var combos = getWordCombos(testWord);
-
-
-				for (var k=0; k<combos.length; k++){
-					chain.push(combos[k]);
-					lookForChains(chain,combos[k]);
+				if (combos.length>0){
+					chain.push(combos[0]);
+					lookForChains(chain,combos[0]);
 				}
+				// for (var k=0; k<combos.length; k++){
+				// 	chain.push(combos[k]);
+				// 	lookForChains(chain,combos[k]);
+				// }
 			}
 		}
 
