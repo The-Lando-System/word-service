@@ -132,7 +132,7 @@ var findChains = function(dict){
 
 	var chains = {};
 
-	for (var i=0; i<dict.length; i++){
+	for (var i=0; i<1; i++){
 
 		var chain = [];
 		var baseWord = dict[i];
@@ -170,3 +170,163 @@ var getChain = function(dictionary){
 module.exports.getChain = getChain;
 module.exports.findAnagrams = findAnagrams;
 module.exports.words = words;
+
+
+// ===========================================================================
+
+var findChains2 = function(dictionary){
+
+  // 1. Read in dictionary
+  // 2. Create a word object, where keys are the length of the words and the values 
+  //    are words whose characters are alphabetically sorted and unique
+  // 3. Get list of starting words (e.g. a, if, be, ...)
+  // 4. Loop through starting words and build chains using following functions:
+
+  //testDictionary = ['a','ab','bad','dab','bald','of','foe','foes','sofie','oaf','sofa','sofas','balds','abs','slab','slabs'];
+
+  // testWordObj = {
+  //   1:['a'],
+  //   2:['ab','fo'],
+  //   3:['abd','abs','afo','efo',],
+  //   4:['abdl','abls','afos','efos'],
+  //   5:['afoss','abdls','ablss','efios']
+  // };
+
+  // testWordObj2 = {
+  //   1:['a'],
+  //   2:['ab','of'],
+  //   3:['bad','abs','oaf','foe','oft'],
+  //   4:['bald','labs','oafs','foes','soft'],
+  //   5:['sofas','sofie','forts'],
+  //   6:['frosts']
+  // };
+
+  var testBaseWords = ['a'];
+
+  //dictionary = testDictionary;
+ // var wordObj = testWordObj2;
+  var baseWords = testBaseWords;
+
+  var wordObjStartTime = new Date().getTime();
+  var wordObj = {};
+  for (var i=0; i<dictionary.length; i++){
+    var key = dictionary[i].length;
+    if (!wordObj.hasOwnProperty(key)){
+      wordObj[key] = [];
+    }
+    wordObj[key].push(dictionary[i]);
+  }
+  var wordObjEndTime = new Date().getTime();
+  console.log('Time to build word obj: ' + (wordObjEndTime-wordObjStartTime));
+
+  //console.log('hey');
+
+  var containsLetters = function(str1, str2){
+    var letters1 = str1.split("");
+    for (var i=0; i<str2.length; i++){
+      if (letters1.indexOf(str2[i]) === -1){
+        return false;
+      }
+    }
+    return true;
+  };
+
+
+  var checkForWords = function(word,wordList){
+    nextWords = [];
+    for (var i=0; i<wordList.length; i++) {
+      if (containsLetters(wordList[i],word)) {
+        nextWords.push(wordList[i]);
+      }
+    }
+    return nextWords;
+  };
+
+  
+  // Loop through starting words here:
+  var getChainsForWord = function(word){
+    var chainsForWord = [];
+    var getNextWords = function(word,lengthKey){
+      if (wordObj.hasOwnProperty(lengthKey+1)){
+        var nextWords = checkForWords(word,wordObj[lengthKey+1]);
+        for (var j=0; j<nextWords.length; j++){
+          chainsForWord.push(nextWords[j]);
+          getNextWords(nextWords[j],lengthKey+1);
+        }
+      }
+    }
+    getNextWords(word,word.length);
+    return {word:word,chains:chainsForWord};
+  };
+
+  var chains = {};
+  for (var i=0; i<baseWords.length; i++) {
+    chains[i] = getChainsForWord(baseWords[i]);
+  }
+
+  return chains;
+}
+
+var getLongestChain2 = function(chains){
+
+  var longestChainStartTime = new Date().getTime();
+  var longestChains = [];
+
+  for (var key in chains){
+
+    var word = chains[key].word;
+    var wordChain = chains[key].chains;
+
+    var longestChain = {words:[word],chainLength:1};
+
+    var testChain = {words:[word],chainLength:1};
+
+    for (var i=0; i<wordChain.length; i++){
+
+      var j = testChain.words.length-1;
+
+      if (testChain.words[j].length<wordChain[i].length){
+        testChain.words.push(wordChain[i]);
+        testChain.chainLength++;
+      } else {
+        if (testChain.chainLength>longestChain.chainLength){
+          longestChain = {};
+          longestChain = clone(testChain);
+        }
+        testChain = {words:[word],chainLength:1};
+        testChain.words.push(wordChain[i]);
+        testChain.chainLength++;
+      }
+    }
+
+    if (testChain.chainLength>longestChain.chainLength){
+      longestChain = {};
+      longestChain = clone(testChain);
+    }
+
+    longestChains.push(longestChain);
+  }
+
+  var chain = {words:[],chainLength:0};
+
+  for(var i=0; i<longestChains.length; i++){
+    if (chain.chainLength<longestChains[i].chainLength){
+      chain = longestChains[i];
+    }
+  }
+
+  var longestChainEndTime = new Date().getTime();
+  console.log('Time to find longest chain: ' + (longestChainEndTime-longestChainStartTime));
+
+  return chain;
+};
+
+var getChain2 = function(dictionary){
+  var startTime = new Date().getTime();
+  var chainResults = getLongestChain2(findChains2(dictionary));
+  var endTime = new Date().getTime();
+  var chains = {chain:chainResults,time:(endTime-startTime)};
+  return chains;
+};
+
+module.exports.getChain2 = getChain2;

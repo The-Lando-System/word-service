@@ -9,10 +9,11 @@
     "method-override": "latest",
     "mongoose": "latest",
     "morgan": "latest",
-    "debug": "latest"
+    "debug": "latest",
+    "nodemon": "latest"
   },
   "scripts": {
     "prestart": "npm install",
-    "start": "node ./bin/www"
+    "start": "nodemon ./bin/www"
   }
 }
