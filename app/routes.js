@@ -52,7 +52,8 @@ module.exports = function(app) {
 			var longestChain = wordHelper.getChain2(newWords);
 			res.send(longestChain);
 		} else {
-			res.send({msg:'Incorrect parameters given!'});
+			var longestChain = wordHelper.getChain2(wordHelper.words);
+			res.send(longestChain);
 		}
 	});
 	app.get('/random-word', function(req,res){

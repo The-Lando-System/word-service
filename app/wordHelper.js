@@ -217,7 +217,7 @@ var findChains2 = function(dictionary){
     wordObj[key].push(dictionary[i]);
   }
   var wordObjEndTime = new Date().getTime();
-  console.log('Time to build word obj: ' + (wordObjEndTime-wordObjStartTime));
+  console.log('Time to build word obj: ' + (wordObjEndTime-wordObjStartTime) + 'ms');
 
   //console.log('hey');
 
@@ -231,6 +231,12 @@ var findChains2 = function(dictionary){
     return true;
   };
 
+  var containsLetters2 = function(str1, str2){
+  	str1 = str1.split("").sort().join("");
+  	str2 = str2.split("").sort().join("");
+  	return (str1.indexOf(str2) > -1);
+  };
+  
 
   var checkForWords = function(word,wordList){
     nextWords = [];
@@ -249,10 +255,16 @@ var findChains2 = function(dictionary){
     var getNextWords = function(word,lengthKey){
       if (wordObj.hasOwnProperty(lengthKey+1)){
         var nextWords = checkForWords(word,wordObj[lengthKey+1]);
-        for (var j=0; j<nextWords.length; j++){
-          chainsForWord.push(nextWords[j]);
-          getNextWords(nextWords[j],lengthKey+1);
-        }
+        // for (var j=0; j<nextWords.length; j++){
+        //   chainsForWord.push(nextWords[j]);
+        //   getNextWords(nextWords[j],lengthKey+1);
+        // }
+        for (var j=0; j<nextWords.length; j++) {
+	        if (j<2){
+	          chainsForWord.push(nextWords[j]);
+	          getNextWords(nextWords[j],lengthKey+1);
+	        }
+      	}
       }
     }
     getNextWords(word,word.length);
@@ -268,6 +280,8 @@ var findChains2 = function(dictionary){
 }
 
 var getLongestChain2 = function(chains){
+
+	debugger;
 
   var longestChainStartTime = new Date().getTime();
   var longestChains = [];
@@ -316,7 +330,7 @@ var getLongestChain2 = function(chains){
   }
 
   var longestChainEndTime = new Date().getTime();
-  console.log('Time to find longest chain: ' + (longestChainEndTime-longestChainStartTime));
+  console.log('Time to find longest chain: ' + (longestChainEndTime-longestChainStartTime) + 'ms');
 
   return chain;
 };
