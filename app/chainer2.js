@@ -74,7 +74,9 @@ var findChains = function(dictionary){
     return nextWords;
   };
 
-  
+  // Keep a running list of words already used in chains
+  var usedWords = {};
+
   // Loop through starting words here:
   var getChainsForWord = function(word){
     var chainsForWord = [];
@@ -86,10 +88,11 @@ var findChains = function(dictionary){
         //   getNextWords(nextWords[j],lengthKey+1);
         // }
         for (var j=0; j<nextWords.length; j++) {
-	        if (j<2){
-	          chainsForWord.push(nextWords[j]);
-	          getNextWords(nextWords[j],lengthKey+1);
-	        }
+          if (!usedWords.hasOwnProperty(nextWords[j])){
+            usedWords[nextWords[j]] = 1;
+            chainsForWord.push(nextWords[j]);
+            getNextWords(nextWords[j],lengthKey+1);
+          }
       	}
       }
     }
