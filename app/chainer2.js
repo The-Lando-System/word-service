@@ -52,6 +52,8 @@ var findChains = function(dictionary){
     for (var i=0; i<str2.length; i++){
       if (letters1.indexOf(str2[i]) === -1){
         return false;
+      } else {
+        letters1.splice(letters1.indexOf(str2[i]),1);
       }
     }
     return true;
@@ -61,8 +63,7 @@ var findChains = function(dictionary){
   	str1 = str1.split("").sort().join("");
   	str2 = str2.split("").sort().join("");
   	return (str1.indexOf(str2) > -1);
-  };
-  
+  }; 
 
   var checkForWords = function(word,wordList){
     nextWords = [];
