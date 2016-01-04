@@ -1,4 +1,6 @@
 var wordHelper = require('./wordHelper');
+var chainer1 = require('./chainer1');
+var chainer2 = require('./chainer2');
 
 module.exports = function(app) {
 	app.use(function(req, res, next) {
@@ -25,7 +27,7 @@ module.exports = function(app) {
 	app.get('/anagrams/:word', function(req,res){
 		res.send({ 'anagrams': wordHelper.findAnagrams(req.params.word,wordHelper.words) });
 	});
-	app.get('/longest-chain/:dictionarySize', function(req,res){
+	app.get('/chainer1/:dictionarySize', function(req,res){
 		if (req.params.dictionarySize && req.params.dictionarySize >= 1 && req.params.dictionarySize < 28){
 			var newWords = [];
 			for (var i=0; i<wordHelper.words.length; i++){
@@ -34,13 +36,14 @@ module.exports = function(app) {
 				}
 			}
 			//console.log(newWords.length);
-			var longestChain = wordHelper.getChain(newWords);
+			var longestChain = chainer1.getChain(newWords);
 			res.send(longestChain);
 		} else {
-			res.send({msg:'Incorrect parameters given!'});
+			var longestChain = chainer1.getChain(wordHelper.words);
+			res.send(longestChain);
 		}
 	});
-	app.get('/longest-chain2/:dictionarySize', function(req,res){
+	app.get('/chainer2/:dictionarySize', function(req,res){
 		if (req.params.dictionarySize && req.params.dictionarySize >= 1 && req.params.dictionarySize < 28){
 			var newWords = [];
 			for (var i=0; i<wordHelper.words.length; i++){
@@ -49,10 +52,10 @@ module.exports = function(app) {
 				}
 			}
 			//console.log(newWords.length);
-			var longestChain = wordHelper.getChain2(newWords);
+			var longestChain = chainer2.getChain(newWords);
 			res.send(longestChain);
 		} else {
-			var longestChain = wordHelper.getChain2(wordHelper.words);
+			var longestChain = chainer2.getChain(wordHelper.words);
 			res.send(longestChain);
 		}
 	});
