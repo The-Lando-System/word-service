@@ -1,4 +1,4 @@
-var wordHelper = require('./wordHelper');
+var chainerHelper = require('./chainerHelper');
 
 var findChains = function(dictionary){
 
@@ -111,7 +111,7 @@ var findChains = function(dictionary){
 
 var getChain = function(dictionary){
   var startTime = new Date().getTime();
-  var chainResults = wordHelper.getLongestChain(findChains(dictionary));
+  var chainResults = chainerHelper.getLongestChain(findChains(dictionary));
   var endTime = new Date().getTime();
   var chains = {chain:chainResults,time:(endTime-startTime)};
   return chains;
