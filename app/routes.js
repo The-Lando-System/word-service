@@ -1,6 +1,4 @@
 var wordHelper = require('./wordHelper');
-var chainer1 = require('./chainer1');
-var chainer2 = require('./chainer2');
 
 module.exports = function(app) {
 	app.use(function(req, res, next) {
@@ -12,7 +10,14 @@ module.exports = function(app) {
 		res.send({ 'words': wordHelper.words });
 	});
 	app.get('/dictionary/:size', function(req,res){
-		if (req.params.size >= 1 && req.params.size < 28){
+
+		if (req.params.size === 'half'){
+			var newWords = [];
+			for (var i=0; i<wordHelper.words.length/2; i++){
+				newWords.push(wordHelper.words[i]);
+			}
+			res.send({ 'words': newWords });
+		} else if(req.params.size >= 1 && req.params.size < 28) {
 			var newWords = [];
 			for (var i=0; i<wordHelper.words.length; i++){
 				if (wordHelper.words[i].length <= req.params.size){
@@ -26,38 +31,6 @@ module.exports = function(app) {
 	});
 	app.get('/anagrams/:word', function(req,res){
 		res.send({ 'anagrams': wordHelper.findAnagrams(req.params.word,wordHelper.words) });
-	});
-	app.get('/chainer1/:dictionarySize', function(req,res){
-		if (req.params.dictionarySize && req.params.dictionarySize >= 1 && req.params.dictionarySize < 28){
-			var newWords = [];
-			for (var i=0; i<wordHelper.words.length; i++){
-				if (wordHelper.words[i].length <= req.params.dictionarySize){
-					newWords.push(wordHelper.words[i]);
-				}
-			}
-			//console.log(newWords.length);
-			var longestChain = chainer1.getChain(newWords);
-			res.send(longestChain);
-		} else {
-			var longestChain = chainer1.getChain(wordHelper.words);
-			res.send(longestChain);
-		}
-	});
-	app.get('/chainer2/:dictionarySize', function(req,res){
-		if (req.params.dictionarySize && req.params.dictionarySize >= 1 && req.params.dictionarySize < 28){
-			var newWords = [];
-			for (var i=0; i<wordHelper.words.length; i++){
-				if (wordHelper.words[i].length <= req.params.dictionarySize){
-					newWords.push(wordHelper.words[i]);
-				}
-			}
-			//console.log(newWords.length);
-			var longestChain = chainer2.getChain(newWords);
-			res.send(longestChain);
-		} else {
-			var longestChain = chainer2.getChain(wordHelper.words);
-			res.send(longestChain);
-		}
 	});
 	app.get('/random-word', function(req,res){
 		var index = Math.floor(Math.random() * wordHelper.words.length);
