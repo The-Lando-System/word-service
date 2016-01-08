@@ -11,6 +11,19 @@ var findAnagrams = function(testWord,dictionary){
 		dictionaryHash[dictionary[i]] = 1;
 	}
 
+	var getLetters = function(word,index,direction){
+		var lettersBefore = '';
+		var lettersAfter = '';
+		for (var i=0; i<word.length; i++){
+			if (i<index){
+				lettersBefore += word[i];
+			} else if (i>index){
+				lettersAfter += word[i];
+			}
+		}
+		return direction === 'before' ? lettersBefore : lettersAfter;
+	};
+
 	var isWord = function(checkWord){
 		return dictionaryHash.hasOwnProperty(checkWord) ? true : false;
 	};
